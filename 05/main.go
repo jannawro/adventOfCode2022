@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -26,6 +27,14 @@ func (s *Stack) isEmpty() bool {
 	return len(*s) == 0
 }
 
+func (s *Stack) Print() {
+	printable := ""
+	for _, element := range *s {
+		printable += element
+	}
+	fmt.Println(printable)
+}
+
 func (s *Stack) Push(str string) {
 	*s = append(*s, str)
 }
@@ -46,18 +55,22 @@ func (s *Stack) PushMultiple(elements []string) {
 }
 
 func (s *Stack) PopMultiple(howMany int) ([]string, bool) {
-	if s.isEmpty() {
-		return []string{}, false
-	} else {
-		lowestIndex := len(*s) - howMany
-		elements := (*s)[:lowestIndex]
-		*s = (*s)[:lowestIndex]
-		return elements, true
-	}
+    var elements []string
+    for i:=0;i<howMany;i++{
+        element, _ := (*s).Pop()
+        elements = append(elements, element)
+    }
+    func(s []string) {
+        sort.SliceStable(s, func(i, j int)  bool{
+            return i>j
+        })
+    }(elements)
+    return elements, true
 }
 
 func executeMove(cargo *[]Stack, move []int) *[]Stack {
 	fmt.Println(move)
+	(*cargo)[move[1]].Print()
 	if move[0] == 1 {
 		container, _ := (*cargo)[move[1]].Pop()
 		(*cargo)[move[2]].Push(container)
